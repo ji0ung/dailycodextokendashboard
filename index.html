@@ -11,16 +11,17 @@
 .rank-row{grid-template-columns:minmax(0,1fr) auto auto;gap:6px 10px;padding:11px 0}.rank-state{padding:2px 6px;border-radius:3px;font-size:11px;font-weight:800;background:#edf1f3;color:#52606d}.rank-state.good{background:#e5f4ed;color:#176246}.rank-state.review{background:#fff0df;color:#8a4a0f}.rank-detail{grid-column:1/-1;color:var(--muted);font-size:11px}.model-suggest{grid-column:1/-1;padding:6px 8px;border-left:2px solid #4f8fab;background:#f2f7f9;color:#254b5e;font-size:11px}.rank-track{height:8px}.rank-fill.good{background:#31906d}.rank-fill.review{background:#d48a38}.optimizer-note{margin:12px 0 0;padding-top:12px;border-top:1px solid var(--line);color:#52606d;font-size:12px}.optimizer-note b{color:var(--ink)}.optimizer-tips{margin:10px 0 0;padding-left:18px;color:#52606d;font-size:12px}.optimizer-tips li{margin:5px 0}.optimizer-sources{font-size:11px;color:var(--muted)}.optimizer-sources a{color:#215e7e}
 .work-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.work-head h2{font-size:15px;margin:0}.til-trigger{border:1px solid #b6cbd4;border-radius:4px;background:#f4f8fa;color:#215e7e;padding:6px 9px;font-size:12px;font-weight:700}.til-trigger:hover,.til-trigger:focus-visible{border-color:var(--blue);color:var(--blue)}.categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:1px solid var(--line);margin-bottom:6px}.category{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:8px 4px;font-size:12px;font-weight:700}.category.active{border-bottom-color:#215e7e;color:#215e7e}.til-dialog{width:min(720px,calc(100vw - 28px));max-height:calc(100vh - 28px);border:1px solid var(--line);border-radius:6px;padding:20px;background:#fff;color:var(--ink)}.til-dialog::backdrop{background:#17212b99}.til-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.til-head h2{font-size:17px;margin:0}.til-close{border:0;background:transparent;color:var(--muted);font-size:24px;line-height:1;width:32px;height:32px}.til-editor{display:block;width:100%;min-height:360px;max-height:55vh;resize:vertical;border:1px solid var(--line);border-radius:4px;padding:14px;font:13px/1.65 ui-monospace,SFMono-Regular,monospace;color:var(--ink)}.til-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:12px}.til-actions button{border:1px solid #b6cbd4;border-radius:4px;background:#fff;color:#215e7e;padding:8px 12px;font-weight:700}.til-actions button:disabled{opacity:.5;cursor:wait}.til-status{min-height:20px;color:var(--muted);font-size:12px;margin:10px 0 0}@media(max-width:500px){.work-head{align-items:flex-start}.til-editor{min-height:45vh}}
 .list-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.topic-filter{max-width:155px;border:1px solid #b6cbd4;border-radius:4px;background:#fff;color:var(--ink);padding:5px 28px 5px 8px;font-size:12px}.topic-tag{display:inline-block;margin-right:5px;padding:1px 5px;border-radius:3px;background:#e8f0f4;color:#215e7e;font-size:10px;font-weight:800}.topic-filter[hidden]{display:none}
+.periods{display:inline-grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;margin:0 0 14px;background:#e7ecef;border-radius:6px}.period{border:0;border-radius:4px;background:transparent;color:var(--muted);padding:7px 14px;font-size:13px;font-weight:750}.period.active{background:#fff;color:#215e7e;box-shadow:0 1px 3px #17212b18}.analysis-model{margin:14px 0 20px;padding:12px;border-left:3px solid #4f8fab;background:#f2f7f9}.analysis-model b{display:block;margin-bottom:3px;color:#254b5e}.ai-share{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:center;margin-bottom:18px}.pie{width:145px;aspect-ratio:1;border-radius:50%;background:conic-gradient(#246ee9 0 var(--codex),#2b99a0 var(--codex) calc(var(--codex) + var(--claw)),#cfd8dd 0);position:relative}.pie:after{content:"";position:absolute;inset:30%;border-radius:50%;background:#fff}.ai-legend{display:grid;gap:8px}.ai-legend p{display:flex;justify-content:space-between;gap:10px;margin:0;font-size:13px}.ai-legend i{display:inline-block;width:9px;height:9px;margin-right:6px;border-radius:2px}.ai-legend .codex{background:#246ee9}.ai-legend .claw{background:#2b99a0}.ai-legend .chatgpt{background:#cfd8dd}.import-note{color:var(--muted);font-size:11px}@media(max-width:520px){.periods{display:grid}.ai-share{grid-template-columns:110px 1fr}.pie{width:110px}}
 </style>
 <main class="wrap"><nav class="nav"><span class="brand">Codex <b>Daybook</b></span><button class="btn" id="refresh" title="Codex 기록 새로고침">새로고침</button></nav>
-<p class="overline">PERSONAL WORK LOG</p><h1>오늘 Codex로 어디까지 진행했는지</h1><p class="lede" id="state">Codex 계정과 로컬 대화 기록을 연결하고 있습니다.</p>
-<section class="metrics"><article class="metric main"><span>오늘 활동 시간</span><strong id="focus">—</strong><small id="focusSub">로컬 대화 시각 기준</small></article><article class="metric"><span>계정 누적 토큰</span><strong id="tokens">—</strong><small>Codex 계정 사용량</small></article><article class="metric"><span>최근 30일 토큰</span><strong id="monthTokens">—</strong><small>계정 일별 사용량</small></article><article class="metric"><span>오늘 대화</span><strong id="active">—</strong><small>Codex 대화 목록</small></article><article class="metric"><span>가장 긴 활동</span><strong id="longest">—</strong><small id="longestSub">로컬 기록 기준</small></article></section>
+<p class="overline">PERSONAL WORK LOG</p><h1>오늘 Codex로 어디까지 진행했는지</h1><p class="lede" id="state">Codex 계정과 로컬 대화 기록을 연결하고 있습니다.</p><div class="periods" role="tablist" aria-label="조회 기간"><button class="period active" data-period="day">오늘</button><button class="period" data-period="week">이번 주</button><button class="period" data-period="month">이번 달</button></div>
+<section class="metrics"><article class="metric main"><span id="focusLabel">오늘 활동 시간</span><strong id="focus">—</strong><small id="focusSub">로컬 대화 시각 기준</small></article><article class="metric"><span>계정 누적 토큰</span><strong id="tokens">—</strong><small>Codex 계정 사용량</small></article><article class="metric"><span id="rangeTokenLabel">오늘 토큰</span><strong id="monthTokens">—</strong><small>계정 일별 사용량</small></article><article class="metric"><span id="activeLabel">오늘 작업 대화</span><strong id="active">—</strong><small>선택 기간 기준</small></article><article class="metric"><span>가장 긴 활동</span><strong id="longest">—</strong><small id="longestSub">로컬 기록 기준</small></article></section>
 <section class="trend"><div class="trend-head"><h2>일별 토큰 사용량</h2><span id="trendRange">최근 30일</span></div><div class="plot"><div class="plot-labels" id="plotLabels"></div><div class="plot-grid"><i></i><i></i><i></i><i></i><i></i></div><div class="plot-bars" id="plotBars"></div><div class="plot-tip" id="plotTip" hidden></div></div><div class="plot-dates" id="plotDates"></div></section>
 <section class="workspace" id="workspace"><article class="card"><div class="work-head"><h2>최근 대화</h2><button class="til-trigger" id="tilTrigger" type="button">오늘 TIL 초안</button></div><div class="categories" role="tablist" aria-label="대화 카테고리"><button class="category active" id="workTab" type="button" role="tab" aria-selected="true">작업 <span id="workCount">0</span></button><button class="category" id="openclawTab" type="button" role="tab" aria-selected="false">OpenClaw <span id="openclawCount">0</span></button></div><div class="list-tools"><span class="badge" id="count">불러오는 중</span><select class="topic-filter" id="topicFilter" aria-label="작업 주제 필터"><option value="all">모든 주제</option><option value="development">개발</option><option value="research">리서치·기획</option><option value="content">콘텐츠</option><option value="career">취업·커리어</option><option value="learning">학습·실습</option><option value="documentation">파일·문서</option><option value="troubleshooting">운영·문제해결</option><option value="other">기타</option></select></div><div id="list"></div></article><div class="splitter" id="splitter" role="separator" tabindex="0" aria-orientation="vertical" aria-label="대화 목록 너비 조절" aria-valuemin="240" aria-valuemax="550" aria-valuenow="300"></div><article class="card side" id="side" aria-live="polite"><span class="badge">대화 선택</span><p class="empty">최근 대화를 불러오는 중입니다.</p></article></section>
-<section class="lower"><article class="card"><div class="cardhead"><h2>토큰 효율 상위 대화 분석</h2><span class="badge">최근 작업 상대 비교</span></div><div id="ranking"></div><p class="optimizer-note" id="optimizerNote"></p><ul class="optimizer-tips"><li>첫 요청에 목표, 완료 기준, 제약, 관련 파일을 함께 적기</li><li>단순 수정은 낮은 reasoning, 설계·디버깅은 높은 reasoning 사용</li><li>주제가 바뀌면 새 대화, 긴 작업은 큰 이정표 뒤 문맥 요약</li><li>원하는 답변 길이와 필요한 테스트 범위를 명시하기</li></ul><p class="optimizer-sources"><a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noreferrer">Gemini 무료 티어</a> · <a href="https://console.groq.com/docs/rate-limits" target="_blank" rel="noreferrer">Groq 무료 한도</a> · <a href="https://openrouter.ai/docs/faq" target="_blank" rel="noreferrer">OpenRouter 제한</a></p></article><article class="card"><div class="cardhead"><h2>최근 30일</h2><span class="badge" id="monthLabel">활동한 날</span></div><div class="calendar" id="cal"></div><div class="legend">적음 <i></i><i></i><i></i><i></i><i></i> 많음</div></article></section></main>
+<section class="lower"><article class="card"><div class="cardhead"><h2>토큰 효율·대체 모델 순위</h2><span class="badge" id="rankPeriod">오늘 작업 비교</span></div><div id="ranking"></div><p class="optimizer-note" id="optimizerNote"></p><ul class="optimizer-tips"><li>첫 요청에 목표, 완료 기준, 제약, 관련 파일을 함께 적기</li><li>단순 수정은 낮은 reasoning, 설계·디버깅은 높은 reasoning 사용</li><li>주제가 바뀌면 새 대화, 긴 작업은 큰 이정표 뒤 문맥 요약</li><li>원하는 답변 길이와 필요한 테스트 범위를 명시하기</li></ul><p class="optimizer-sources"><a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noreferrer">Gemini 무료 티어</a> · <a href="https://console.groq.com/docs/rate-limits" target="_blank" rel="noreferrer">Groq 무료 한도</a> · <a href="https://openrouter.ai/docs/faq" target="_blank" rel="noreferrer">OpenRouter 제한</a></p></article><article class="card"><div class="cardhead"><h2>AI별 사용 비중</h2><span class="badge" id="aiPeriod">오늘</span></div><div class="ai-share"><div class="pie" id="aiPie"></div><div class="ai-legend" id="aiLegend"></div></div><p class="import-note">ChatGPT는 공식 데이터 내보내기 파일을 연결하면 집계할 수 있습니다.</p><div class="cardhead"><h2 id="calendarTitle">오늘</h2><span class="badge" id="monthLabel">활동한 날</span></div><div class="calendar" id="cal"></div><div class="legend">적음 <i></i><i></i><i></i><i></i><i></i> 많음</div></article></section></main>
 <dialog class="til-dialog" id="tilDialog"><div class="til-head"><h2>오늘 TIL</h2><button class="til-close" id="tilClose" type="button" aria-label="닫기">×</button></div><textarea class="til-editor" id="tilEditor" aria-label="TIL Markdown 초안"></textarea><div class="til-actions"><button id="tilCopy" type="button">복사</button><button id="tilDownload" type="button">Markdown 다운로드</button></div><p class="til-status" id="tilStatus" role="status"></p></dialog>
 <script>
-let data={conversations:[],usage:{summary:null,dailyUsageBuckets:[]}},selection=0,category='work',topic='all';
+let data={conversations:[],usage:{summary:null,dailyUsageBuckets:[]}},selection=0,category='work',topic='all',period='day';
 const $=selector=>document.querySelector(selector);
 const fmtMinutes=minutes=>minutes>=60?`${Math.floor(minutes/60)}시간 ${minutes%60}분`:`${minutes}분`;
 const fmtTokens=tokens=>tokens==null?'—':new Intl.NumberFormat('ko-KR',{notation:'compact',maximumFractionDigits:1}).format(tokens);
@@ -94,13 +95,15 @@ async function show(index){
     const response=await fetch(`/api/conversation?id=${encodeURIComponent(row.id)}`,{cache:'no-store'});
     const detail=await response.json();if(!response.ok)throw new Error(detail.error||'본문 조회 실패');
     if(current!==selection)return;
-    const badge=document.createElement('span'),title=document.createElement('h2'),meta=document.createElement('p'),actions=document.createElement('div'),openChat=document.createElement('a'),summary=document.createElement('section'),summaryTitle=document.createElement('h3'),journeyTitle=document.createElement('h3');
+    const badge=document.createElement('span'),title=document.createElement('h2'),meta=document.createElement('p'),actions=document.createElement('div'),openChat=document.createElement('a'),modelCard=document.createElement('section'),modelTitle=document.createElement('b'),modelText=document.createElement('span'),summary=document.createElement('section'),summaryTitle=document.createElement('h3'),journeyTitle=document.createElement('h3');
     badge.className='badge';badge.textContent=row.status;
     title.textContent=row.title;meta.className='doc-meta';meta.textContent=`${when(row.start)} 시작 · ${detail.turns.length}번의 요청 · ${row.minutes?fmtMinutes(row.minutes)+' 활동':''}`;
     actions.className='doc-actions';openChat.className='open-chat';openChat.href=`codex://threads/${encodeURIComponent(row.id)}`;openChat.textContent='대화 보러가기 ↗';openChat.title='ChatGPT 데스크톱 앱에서 원본 대화 열기';actions.append(openChat);
+    const perTurn=(Math.max(0,row.inputTokens-row.cachedInputTokens)+row.outputTokens)/Math.max(1,row.requestCount),alternative=modelAlternative(row,perTurn,perTurn);
+    modelCard.className='analysis-model';modelTitle.textContent='이 작업의 모델 분석';modelText.textContent=`${row.primaryModel||'사용 모델 미확인'} 사용 · 대체 후보 ${alternative.name} · ${alternative.note}`;modelCard.append(modelTitle,modelText);
     summary.className='summary';summaryTitle.textContent='마지막 답변 핵심';summary.append(summaryTitle,markdownBlock(detail.summaryHtml||'<p>완료된 답변이 없습니다.</p>'));
     journeyTitle.className='journey-title';journeyTitle.textContent='대화 여정';
-    side.replaceChildren(back,badge,title,meta,actions,summary,journeyTitle);
+    side.replaceChildren(back,badge,title,meta,actions,modelCard,summary,journeyTitle);
     detail.turns.forEach(turn=>{
       const step=document.createElement('section'),head=document.createElement('div'),heading=document.createElement('h3'),time=document.createElement('small');
       step.className='step';step.dataset.step=turn.number;
@@ -121,19 +124,21 @@ async function show(index){
   }catch(error){if(current===selection)loading.textContent=`본문을 불러오지 못했습니다: ${error.message}`}
 }
 function render(){
-  const rows=data.conversations,workRows=rows.filter(row=>row.category!=='openclaw'),visibleRows=rows.filter(row=>category==='openclaw'?row.category==='openclaw':row.category!=='openclaw'&&(topic==='all'||row.topic===topic)),buckets=data.usage.dailyUsageBuckets||[],summary=data.usage.summary||{};
-  const today=dateKey(new Date()),todayRows=rows.filter(row=>dateKey(row.update)===today);
-  const todayWorkRows=todayRows.filter(row=>row.category!=='openclaw');
-  const todayMinutes=todayWorkRows.reduce((sum,row)=>sum+row.minutes,0);
-  const days=Array.from({length:30},(_,index)=>{const day=new Date();day.setDate(day.getDate()-29+index);return dateKey(day)});
+  const rows=data.conversations,buckets=data.usage.dailyUsageBuckets||[],summary=data.usage.summary||{},rangeDays={day:1,week:7,month:30}[period],rangeNames={day:'오늘',week:'이번 주',month:'이번 달'};
+  const today=dateKey(new Date()),days=Array.from({length:rangeDays},(_,index)=>{const day=new Date();day.setDate(day.getDate()-rangeDays+1+index);return dateKey(day)}),startDay=days[0];
+  const periodRows=rows.filter(row=>dateKey(row.update)>=startDay),workRows=periodRows.filter(row=>row.category!=='openclaw'),visibleRows=periodRows.filter(row=>category==='openclaw'?row.category==='openclaw':row.category!=='openclaw'&&(topic==='all'||row.topic===topic));
+  const periodMinutes=workRows.reduce((sum,row)=>sum+row.minutes,0);
   const byDay=new Map(buckets.map(bucket=>[bucket.startDate,bucket.tokens]));
-  const monthTotal=days.reduce((sum,day)=>sum+(byDay.get(day)||0),0);
+  const rangeTotal=days.reduce((sum,day)=>sum+(byDay.get(day)||0),0);
   const longest=workRows.reduce((best,row)=>row.minutes>(best?.minutes||0)?row:best,null);
-  $('#focus').textContent=todayMinutes?fmtMinutes(todayMinutes):'0분';
-  $('#focusSub').textContent=`${todayWorkRows.length}개 작업 대화 · 로컬 시각 기준`;
+  document.querySelectorAll('.period').forEach(button=>{const active=button.dataset.period===period;button.classList.toggle('active',active);button.setAttribute('aria-selected',active)});
+  $('#focusLabel').textContent=`${rangeNames} 활동 시간`;$('#rangeTokenLabel').textContent=`${rangeNames} 토큰`;$('#activeLabel').textContent=`${rangeNames} 작업 대화`;
+  $('#trendRange').textContent=rangeNames;$('#rankPeriod').textContent=`${rangeNames} 작업 비교`;$('#aiPeriod').textContent=rangeNames;$('#calendarTitle').textContent=rangeNames;
+  $('#focus').textContent=periodMinutes?fmtMinutes(periodMinutes):'0분';
+  $('#focusSub').textContent=`${workRows.length}개 작업 대화 · 로컬 시각 기준`;
   $('#tokens').textContent=fmtTokens(summary.lifetimeTokens);
-  $('#monthTokens').textContent=fmtTokens(monthTotal);
-  $('#active').textContent=`${todayWorkRows.length}개`;
+  $('#monthTokens').textContent=fmtTokens(rangeTotal);
+  $('#active').textContent=`${workRows.length}개`;
   $('#longest').textContent=longest?.minutes?fmtMinutes(longest.minutes):'—';
   $('#longestSub').textContent=longest?.title||'로컬 기록 기준';
   $('#workCount').textContent=workRows.length;$('#openclawCount').textContent=rows.length-workRows.length;
@@ -150,7 +155,7 @@ function render(){
   });
   const max=Math.max(1,...days.map(day=>byDay.get(day)||0));
   const plot=$('#plotBars'),labels=$('#plotLabels'),dates=$('#plotDates'),tip=$('#plotTip');
-  plot.replaceChildren();labels.replaceChildren();dates.replaceChildren();
+  plot.replaceChildren();labels.replaceChildren();dates.replaceChildren();plot.style.gridTemplateColumns=`repeat(${days.length},minmax(0,1fr))`;
   for(const ratio of [1,.75,.5,.25,0]){
     const label=document.createElement('span');label.textContent=fmtTokens(Math.round(max*ratio));labels.append(label);
   }
@@ -163,7 +168,8 @@ function render(){
     bar.onmouseleave=bar.onblur=()=>{tip.hidden=true};
     plot.append(bar);
   });
-  for(const day of [days[0],days[9],days[19],days[29]]){
+  const dateIndexes=[0,Math.floor((days.length-1)/3),Math.floor((days.length-1)*2/3),days.length-1];
+  for(const day of [...new Set(dateIndexes)].map(index=>days[index])){
     const label=document.createElement('span');label.textContent=day.slice(5);dates.append(label);
   }
   const ranking=$('#ranking');ranking.replaceChildren();
@@ -197,6 +203,9 @@ function render(){
     cell.textContent=String(Number(day.slice(-2)));cell.title=`${day} · ${new Intl.NumberFormat('ko-KR').format(tokens)} 토큰`;
     calendar.append(cell);
   });
+  const codexMinutes=workRows.reduce((sum,row)=>sum+row.minutes,0),clawRows=periodRows.filter(row=>row.category==='openclaw'),clawMinutes=clawRows.reduce((sum,row)=>sum+row.minutes,0),tracked=Math.max(1,codexMinutes+clawMinutes),codexShare=codexMinutes/tracked*100,clawShare=clawMinutes/tracked*100;
+  $('#aiPie').style.setProperty('--codex',`${codexShare}%`);$('#aiPie').style.setProperty('--claw',`${clawShare}%`);
+  $('#aiLegend').innerHTML=`<p><span><i class="codex"></i>Codex 작업</span><b>${fmtMinutes(codexMinutes)}</b></p><p><span><i class="claw"></i>OpenClaw</span><b>${fmtMinutes(clawMinutes)}</b></p><p><span><i class="chatgpt"></i>ChatGPT</span><b>미연결</b></p>`;
   const selected=new URLSearchParams(location.search).get('conversation');
   const selectedIndex=visibleRows.findIndex(row=>row.id===selected);
   if(selectedIndex>=0||!matchMedia('(max-width: 900px)').matches)show(rows.indexOf(visibleRows[Math.max(0,selectedIndex)]));
@@ -209,6 +218,7 @@ async function refresh(){
   finally{$('#refresh').disabled=false}
 }
 function changeCategory(next){category=next;topic='all';history.replaceState(null,'',location.pathname);render()}
+document.querySelectorAll('.period').forEach(button=>button.onclick=()=>{period=button.dataset.period;history.replaceState(null,'',location.pathname);render()});
 $('#workTab').onclick=()=>changeCategory('work');$('#openclawTab').onclick=()=>changeCategory('openclaw');
 $('#topicFilter').onchange=event=>{topic=event.target.value;history.replaceState(null,'',location.pathname);render()};
 const tilDialog=$('#tilDialog'),tilEditor=$('#tilEditor'),tilStatus=$('#tilStatus');

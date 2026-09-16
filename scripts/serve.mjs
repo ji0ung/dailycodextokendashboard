@@ -33,7 +33,7 @@ async function getDashboard() {
     ]);
     const local = new Map(JSON.parse(localExport).conversations.map((row) => [row.id, row]));
     const page = await codex.request('thread/list', {
-      limit: 30,
+      limit: 100,
       sortKey: 'updated_at',
       sourceKinds: ['cli', 'vscode', 'appServer', 'exec', 'unknown'],
     });

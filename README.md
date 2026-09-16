@@ -25,4 +25,6 @@ node scripts/serve.mjs
 
 상위 대화에는 로컬 세션에서 확인한 주 사용 모델과 작업별 무료 API 대체 후보를 함께 표시합니다. 복잡한 코딩·에이전트 작업에는 [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/latest-model), 요약·분류·초안 작업에는 [Groq의 GPT-OSS 120B](https://console.groq.com/docs/models), 낮은 빈도의 실험에는 [OpenRouter 무료 라우터](https://openrouter.ai/docs/cookbook/get-started/free-models-router-playground)를 제안합니다. 이는 동급 성능 보장이 아니라 시험 우선순위이며, 무료 한도와 모델 가용성은 각 공급자의 최신 문서를 확인해야 합니다. 현재 추천은 로컬 규칙으로 계산하므로 외부 API로 대화 내용을 전송하지 않습니다.
 
+`오늘 / 이번 주 / 이번 달` 기간을 전환하면 활동 시간, 토큰, 대화 목록, 효율 순위, 대체 모델 추천, AI별 사용 비중이 함께 바뀝니다. AI 사용 비중은 활동 시간 기준으로 Codex 작업과 OpenClaw 런타임 대화를 비교합니다. ChatGPT에는 개인 대화 사용량을 실시간으로 읽는 공식 API가 없으므로 아직 집계하지 않으며, 추후 공식 [ChatGPT 데이터 내보내기](https://help.openai.com/en/articles/7260999-how-do-i-export-my-chatgpt-history-and-data)의 `conversations.json` 가져오기를 지원할 수 있습니다.
+
 공식 프로토콜: [Codex App Server](https://developers.openai.com/codex/app-server/). 계정 일별 사용량은 서비스가 제공한 날짜만 표시하며, 대화별 토큰은 계정 API 수치와 별개로 로컬 로그에서 읽습니다.
