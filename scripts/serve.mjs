@@ -61,6 +61,7 @@ async function getDashboard() {
           outputTokens: log?.outputTokens || 0,
           reasoningTokens: log?.reasoningTokens || 0,
           requestCount: log?.requestCount || 0,
+          primaryModel: log?.primaryModel || 'unknown',
           status: thread.status?.type === 'active' ? '작업 중' : 'Codex 대화',
         };
       }),

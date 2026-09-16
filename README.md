@@ -23,4 +23,6 @@ node scripts/serve.mjs
 
 토큰 효율 분석은 최근 작업 대화끼리 비교합니다. `새 토큰 = 입력 토큰 - 캐시 입력 토큰 + 출력 토큰`으로 계산하고, 캐시 재사용률과 요청 1회당 새 토큰을 함께 표시합니다. 캐시율 80% 이상이면서 요청당 새 토큰이 중앙값 이하면 `효율 양호`, 요청당 새 토큰이 중앙값의 1.5배를 넘거나 캐시율이 50% 미만이면 `점검 권장`으로 표시합니다. 작업 난이도와 결과 품질은 자동 판정하지 않습니다. 최적화 안내는 OpenAI의 [모델 가이드](https://developers.openai.com/api/docs/guides/latest-model)와 [프롬프트 캐싱 가이드](https://developers.openai.com/api/docs/guides/prompt-caching)를 기준으로 합니다.
 
+상위 대화에는 로컬 세션에서 확인한 주 사용 모델과 작업별 무료 API 대체 후보를 함께 표시합니다. 복잡한 코딩·에이전트 작업에는 [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/latest-model), 요약·분류·초안 작업에는 [Groq의 GPT-OSS 120B](https://console.groq.com/docs/models), 낮은 빈도의 실험에는 [OpenRouter 무료 라우터](https://openrouter.ai/docs/cookbook/get-started/free-models-router-playground)를 제안합니다. 이는 동급 성능 보장이 아니라 시험 우선순위이며, 무료 한도와 모델 가용성은 각 공급자의 최신 문서를 확인해야 합니다. 현재 추천은 로컬 규칙으로 계산하므로 외부 API로 대화 내용을 전송하지 않습니다.
+
 공식 프로토콜: [Codex App Server](https://developers.openai.com/codex/app-server/). 계정 일별 사용량은 서비스가 제공한 날짜만 표시하며, 대화별 토큰은 계정 API 수치와 별개로 로컬 로그에서 읽습니다.

@@ -71,6 +71,14 @@ function parseSession(filePath, source) {
       && event.payload?.role === 'user'
       && cleanUserText(messageText(event));
   }).length;
+  const modelCounts = events.reduce((counts, event) => {
+    const model = event.type === 'turn_context'
+      ? event.payload?.model
+      : event.payload?.type === 'thread_settings_applied' ? event.payload?.thread_settings?.model : null;
+    if (model) counts.set(model, (counts.get(model) || 0) + 1);
+    return counts;
+  }, new Map());
+  const primaryModel = [...modelCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown';
   const activeMs = timestamps.slice(1).reduce((total, timestamp, index) => {
     return total + Math.min(timestamp - timestamps[index], activityGapMs);
   }, 0);
@@ -89,6 +97,7 @@ function parseSession(filePath, source) {
     outputTokens: latestUsage.output_tokens || 0,
     reasoningTokens: latestUsage.reasoning_output_tokens || 0,
     requestCount,
+    primaryModel,
     status: 'Codex 로컬 세션',
   };
 }
