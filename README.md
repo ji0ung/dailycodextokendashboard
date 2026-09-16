@@ -14,6 +14,8 @@ node scripts/serve.mjs
 
 브라우저에서 `http://127.0.0.1:4173/`을 여세요. 새로고침 버튼은 App Server의 `account/usage/read`, `thread/list`를 다시 호출하고 로컬 세션 기록도 갱신합니다. 생성된 `data/codex-sessions.json`은 Git에서 제외됩니다.
 
+첫 실행에는 관리자 이메일과 12자 이상의 비밀번호를 등록합니다. 비밀번호는 PBKDF2-SHA512 해시로만 SQLite에 저장하고, 로그인 후 7일짜리 HttpOnly·SameSite 세션 쿠키를 발급합니다. 대시보드, 대화 본문, 운영 API는 인증된 사용자만 접근할 수 있습니다. 현재 서버는 `127.0.0.1`에만 바인딩되므로 외부 공개 데모와 분리됩니다.
+
 대화를 선택하면 App Server의 `thread/read`로 저장된 본문을 읽어 마지막 답변 요약과 요청별 여정을 보여줍니다. 진행 메모는 펼쳐서 확인할 수 있습니다.
 `대화 보러가기`는 공식 `codex://threads/<thread-id>` 링크로 ChatGPT 데스크톱 앱의 로컬 대화를 엽니다.
 

@@ -7,11 +7,27 @@ import MarkdownIt from 'markdown-it';
 import { connectCodex } from './codex-app-server.mjs';
 import { cleanConversationText, displayTitle } from './clean-conversation-text.mjs';
 import { createOperationsStore } from './operations-store.mjs';
+import { createAuthStore } from './auth-store.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const port = Number(process.env.DAYBOOK_PORT || 4173);
 let inFlight;
 const markdown = new MarkdownIt({ html: false, linkify: false });
+const databasePath = join(root, 'data', 'operations.db');
+
+function cookieValue(request, name) {
+  const cookies = Object.fromEntries((request.headers.cookie || '').split(';').map((item) => item.trim().split('=')));
+  return cookies[name] || null;
+}
+
+function readJson(request) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    request.on('data', (chunk) => { body += chunk; if (body.length > 10000) reject(new Error('Request too large')); });
+    request.on('end', () => { try { resolve(JSON.parse(body || '{}')); } catch { reject(new Error('Invalid JSON')); } });
+    request.on('error', reject);
+  });
+}
 
 function refreshLocalSessions() {
   return new Promise((resolve, reject) => {
@@ -116,6 +132,54 @@ async function getConversation(threadId) {
 const server = createServer(async (request, response) => {
   const pathname = new URL(request.url, 'http://localhost').pathname;
   response.setHeader('Cache-Control', 'no-store');
+  const auth = createAuthStore(databasePath);
+  const session = auth.authenticate(cookieValue(request, 'daybook_session'));
+  if (pathname === '/api/auth/status') {
+    response.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    response.end(JSON.stringify({ authenticated: Boolean(session), needsSetup: auth.needsSetup(), user: session ? { email: session.email } : null }));
+    auth.close();
+    return;
+  }
+  if ((pathname === '/api/auth/setup' || pathname === '/api/auth/login') && request.method === 'POST') {
+    try {
+      const { email, password } = await readJson(request);
+      if (!/^\S+@\S+\.\S+$/.test(email || '') || typeof password !== 'string' || password.length < 12) throw new Error('이메일과 12자 이상의 비밀번호가 필요합니다.');
+      if (pathname.endsWith('/setup')) auth.createOwner(email, password);
+      const login = auth.login(email, password);
+      if (!login) throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.');
+      response.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Set-Cookie': `daybook_session=${login.token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=604800` });
+      response.end(JSON.stringify({ ok: true }));
+    } catch (error) {
+      response.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+      response.end(JSON.stringify({ error: error.message }));
+    } finally { auth.close(); }
+    return;
+  }
+  if (pathname === '/api/auth/logout' && request.method === 'POST') {
+    auth.logout(session?.tokenHash);
+    response.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Set-Cookie': 'daybook_session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0' });
+    response.end(JSON.stringify({ ok: true }));
+    auth.close();
+    return;
+  }
+  if (pathname === '/login.html') {
+    auth.close();
+    response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    response.end(await readFile(join(root, 'login.html')));
+    return;
+  }
+  if (!session) {
+    auth.close();
+    if (pathname.startsWith('/api/')) {
+      response.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
+      response.end(JSON.stringify({ error: 'Authentication required' }));
+    } else {
+      response.writeHead(302, { Location: '/login.html' });
+      response.end();
+    }
+    return;
+  }
+  auth.close();
   if (pathname === '/api/dashboard') {
     try {
       inFlight ||= getDashboard().finally(() => { inFlight = undefined; });
@@ -146,9 +210,9 @@ const server = createServer(async (request, response) => {
     return;
   }
   if (pathname === '/api/operations') {
-    const store = createOperationsStore(join(root, 'data', 'operations.db'));
+    const store = createOperationsStore(databasePath);
     try {
-      const runs = store.list(process.env.DAYBOOK_USER_KEY || 'local-owner', 20);
+      const runs = store.list(session.userKey, 20);
       response.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       response.end(JSON.stringify({ runs }));
     } finally {
