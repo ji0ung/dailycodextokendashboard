@@ -67,6 +67,7 @@ async function getDashboard() {
         return {
           id: thread.id,
           title: log?.category === 'openclaw' ? 'OpenClaw와의 대화' : displayTitle(thread.name || thread.preview || log?.title),
+          searchPreview: log?.category === 'openclaw' ? '' : cleanConversationText(thread.preview || '').replace(/\s+/g, ' ').slice(0, 500),
           category: log?.category || 'work',
           topic: log?.topic || 'other',
           start: new Date(thread.createdAt * 1000).toISOString(),

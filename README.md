@@ -25,6 +25,8 @@ node scripts/serve.mjs
 
 토큰 효율 분석은 최근 작업 대화끼리 비교합니다. `새 토큰 = 입력 토큰 - 캐시 입력 토큰 + 출력 토큰`으로 계산하고, 캐시 재사용률과 요청 1회당 새 토큰을 함께 표시합니다. 캐시율 80% 이상이면서 요청당 새 토큰이 중앙값 이하면 `효율 양호`, 요청당 새 토큰이 중앙값의 1.5배를 넘거나 캐시율이 50% 미만이면 `점검 권장`으로 표시합니다. 작업 난이도와 결과 품질은 자동 판정하지 않습니다. 최적화 안내는 OpenAI의 [모델 가이드](https://developers.openai.com/api/docs/guides/latest-model)와 [프롬프트 캐싱 가이드](https://developers.openai.com/api/docs/guides/prompt-caching)를 기준으로 합니다.
 
+토큰 절감 레이더는 선택 기간의 실제 기록에서 접두사 캐시 적중률, 비동기 Batch 후보 요청 수, Flash-Lite급 저비용 모델 라우팅 후보 대화 수를 계산합니다. 캐시 최적화는 공통 지침을 접두사에 유지하는 공식 권장 방식을 따르고, 즉시 응답이 필요 없는 TIL 요약·평가셋은 50% 할인되는 Batch API 후보로 분리합니다. 최근 대화는 제목, 정제된 요청 미리보기, 카테고리, 주 사용 모델을 검색할 수 있으며 `/` 키로 검색창에 바로 이동합니다.
+
 상위 대화에는 로컬 세션에서 확인한 주 사용 모델과 작업별 무료 API 대체 후보를 함께 표시합니다. 복잡한 코딩·에이전트 작업에는 [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/latest-model), 요약·분류·초안 작업에는 [Groq의 GPT-OSS 120B](https://console.groq.com/docs/models), 낮은 빈도의 실험에는 [OpenRouter 무료 라우터](https://openrouter.ai/docs/cookbook/get-started/free-models-router-playground)를 제안합니다. 이는 동급 성능 보장이 아니라 시험 우선순위이며, 무료 한도와 모델 가용성은 각 공급자의 최신 문서를 확인해야 합니다. 현재 추천은 로컬 규칙으로 계산하므로 외부 API로 대화 내용을 전송하지 않습니다.
 
 `오늘 / 이번 주 / 이번 달` 기간을 전환하면 활동 시간, 토큰, 대화 목록, 효율 순위, 대체 모델 추천, AI별 사용 비중이 함께 바뀝니다. AI 사용 비중은 활동 시간 기준으로 Codex 작업과 OpenClaw 런타임 대화를 비교합니다. ChatGPT에는 개인 대화 사용량을 실시간으로 읽는 공식 API가 없으므로 아직 집계하지 않으며, 추후 공식 [ChatGPT 데이터 내보내기](https://help.openai.com/en/articles/7260999-how-do-i-export-my-chatgpt-history-and-data)의 `conversations.json` 가져오기를 지원할 수 있습니다.
