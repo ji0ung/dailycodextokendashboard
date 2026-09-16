@@ -135,7 +135,7 @@ function render(){
   const longest=workRows.reduce((best,row)=>row.minutes>(best?.minutes||0)?row:best,null);
   document.querySelectorAll('.period').forEach(button=>{const active=button.dataset.period===period;button.classList.toggle('active',active);button.setAttribute('aria-selected',active)});
   $('#focusLabel').textContent=`${rangeNames} 활동 시간`;$('#rangeTokenLabel').textContent=`${rangeNames} 토큰`;$('#activeLabel').textContent=`${rangeNames} 작업 대화`;
-  $('#trendRange').textContent=rangeNames;$('#rankPeriod').textContent=`${rangeNames} 작업 비교`;$('#aiPeriod').textContent=rangeNames;$('#calendarTitle').textContent=rangeNames;
+  $('#trendRange').textContent=period==='day'?'한국시간 · 0–23시':`${rangeNames} · 한국시간`;$('#rankPeriod').textContent=`${rangeNames} 작업 비교`;$('#aiPeriod').textContent=rangeNames;$('#calendarTitle').textContent=rangeNames;
   $('#focus').textContent=periodMinutes?fmtMinutes(periodMinutes):'0분';
   $('#focusSub').textContent=`${workRows.length}개 작업 대화 · 로컬 시각 기준`;
   $('#tokens').textContent=fmtTokens(summary.lifetimeTokens);
@@ -160,24 +160,28 @@ function render(){
     title.textContent=row.title;detail.innerHTML=`<span class="topic-tag">${topicLabels[row.topic]||'기타'}</span>${row.status} · ${row.minutes?fmtMinutes(row.minutes):'시간 미확인'} · ${row.totalTokens?fmtTokens(row.totalTokens)+' 대화 토큰':'토큰 미확인'}`;
     right.className='when';right.textContent=when(row.update);left.append(title,detail);button.append(left,right);list.append(button);
   });
-  const max=Math.max(1,...days.map(day=>byDay.get(day)||0));
+  const hourly=Array.from({length:24},()=>0);for(const row of workRows)for(const point of row.tokenTimeline||[]){if(dateKey(point.timestamp)===today){const hour=Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',hour:'2-digit',hourCycle:'h23'}).format(new Date(point.timestamp)));hourly[hour]+=point.totalTokens}}
+  const series=period==='day'?hourly:days.map(day=>workRows.reduce((sum,row)=>sum+(row.tokenTimeline||[]).filter(point=>dateKey(point.timestamp)===day).reduce((subtotal,point)=>subtotal+point.totalTokens,0),0));
+  const seriesKeys=period==='day'?Array.from({length:24},(_,hour)=>`${String(hour).padStart(2,'0')}:00`):days;
+  const currentHour=Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',hour:'2-digit',hourCycle:'h23'}).format(new Date()));
+  const max=Math.max(1,...series);
   const plot=$('#plotBars'),labels=$('#plotLabels'),dates=$('#plotDates'),tip=$('#plotTip');
-  plot.replaceChildren();labels.replaceChildren();dates.replaceChildren();plot.style.gridTemplateColumns=`repeat(${days.length},minmax(0,1fr))`;
+  plot.replaceChildren();labels.replaceChildren();dates.replaceChildren();plot.style.gridTemplateColumns=`repeat(${series.length},minmax(0,1fr))`;
   for(const ratio of [1,.75,.5,.25,0]){
     const label=document.createElement('span');label.textContent=fmtTokens(Math.round(max*ratio));labels.append(label);
   }
-  days.forEach(day=>{
-    const tokens=byDay.get(day)||0,bar=document.createElement('button');
-    bar.type='button';bar.className=`plot-bar ${day===today?'today':''}`;
+  series.forEach((tokens,index)=>{
+    const key=seriesKeys[index],bar=document.createElement('button');
+    bar.type='button';bar.className=`plot-bar ${(period==='day'&&index===currentHour)||key===today?'today':''}`;
     bar.style.height=`${Math.max(1,tokens/max*100)}%`;
-    bar.setAttribute('aria-label',`${day}: ${new Intl.NumberFormat('ko-KR').format(tokens)} 토큰`);
-    bar.onmouseenter=bar.onfocus=()=>{tip.hidden=false;tip.textContent=`${day} · ${new Intl.NumberFormat('ko-KR').format(tokens)} 토큰`};
+    bar.setAttribute('aria-label',`${key}: ${new Intl.NumberFormat('ko-KR').format(tokens)} 토큰`);
+    bar.onmouseenter=bar.onfocus=()=>{tip.hidden=false;tip.textContent=`${key} · ${new Intl.NumberFormat('ko-KR').format(tokens)} 토큰`};
     bar.onmouseleave=bar.onblur=()=>{tip.hidden=true};
     plot.append(bar);
   });
-  const dateIndexes=[0,Math.floor((days.length-1)/3),Math.floor((days.length-1)*2/3),days.length-1];
-  for(const day of [...new Set(dateIndexes)].map(index=>days[index])){
-    const label=document.createElement('span');label.textContent=day.slice(5);dates.append(label);
+  const dateIndexes=[0,Math.floor((seriesKeys.length-1)/3),Math.floor((seriesKeys.length-1)*2/3),seriesKeys.length-1];
+  for(const key of [...new Set(dateIndexes)].map(index=>seriesKeys[index])){
+    const label=document.createElement('span');label.textContent=period==='day'?key:key.slice(5);dates.append(label);
   }
   const ranking=$('#ranking');ranking.replaceChildren();
   const measurable=workRows.filter(row=>row.inputTokens>0&&row.requestCount>0).map(row=>({...row,uncachedTokens:Math.max(0,row.inputTokens-row.cachedInputTokens)+row.outputTokens,cacheRate:row.cachedInputTokens/row.inputTokens}));

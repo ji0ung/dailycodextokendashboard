@@ -74,6 +74,7 @@ async function getDashboard() {
           update: new Date(thread.updatedAt * 1000).toISOString(),
           minutes: log?.minutes || 0,
           totalTokens: log?.totalTokens || 0,
+          tokenTimeline: log?.tokenTimeline || [],
           inputTokens: log?.inputTokens || 0,
           cachedInputTokens: log?.cachedInputTokens || 0,
           outputTokens: log?.outputTokens || 0,

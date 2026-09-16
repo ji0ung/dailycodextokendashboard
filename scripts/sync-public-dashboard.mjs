@@ -27,6 +27,22 @@ function dateKey(value) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value));
 }
 
+function koreanHour(value) {
+  return Number(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Seoul', hour: '2-digit', hourCycle: 'h23' }).format(new Date(value)));
+}
+
+function todayHourly(rows) {
+  const today = dateKey(new Date());
+  const hours = Array.from({ length: 24 }, (_, hour) => ({ hour, tokens: 0 }));
+  for (const row of rows) {
+    if (row.category === 'openclaw') continue;
+    for (const point of row.tokenTimeline || []) {
+      if (dateKey(point.timestamp) === today) hours[koreanHour(point.timestamp)].tokens += point.totalTokens;
+    }
+  }
+  return hours;
+}
+
 function periodSummary(rows, days) {
   const start = new Date();
   start.setDate(start.getDate() - days + 1);
@@ -59,6 +75,8 @@ try {
   const payload = {
     generatedAt: new Date().toISOString(),
     privacy: 'aggregate-only',
+    timezone: 'Asia/Seoul',
+    hourly: todayHourly(rows),
     periods: {
       day: periodSummary(rows, 1),
       week: periodSummary(rows, 7),

@@ -63,6 +63,13 @@ function parseSession(filePath, source) {
     .filter((event) => event.type === 'event_msg')
     .map((event) => event.payload?.info?.total_token_usage?.total_tokens)
     .filter(Number.isFinite);
+  const tokenTimeline = events.flatMap((event) => {
+    const totalTokens = event.type === 'event_msg' ? event.payload?.info?.last_token_usage?.total_tokens : null;
+    const timestamp = Date.parse(event.timestamp);
+    return Number.isFinite(totalTokens) && Number.isFinite(timestamp)
+      ? [{ timestamp: new Date(timestamp).toISOString(), totalTokens }]
+      : [];
+  });
   const latestUsage = events
     .filter((event) => event.type === 'event_msg' && event.payload?.info?.total_token_usage)
     .at(-1)?.payload.info.total_token_usage || {};
@@ -92,6 +99,7 @@ function parseSession(filePath, source) {
     update: new Date(timestamps.at(-1)).toISOString(),
     minutes: Math.max(1, Math.round(activeMs / 60000)),
     totalTokens: tokenTotals.length ? Math.max(...tokenTotals) : 0,
+    tokenTimeline,
     inputTokens: latestUsage.input_tokens || 0,
     cachedInputTokens: latestUsage.cached_input_tokens || 0,
     outputTokens: latestUsage.output_tokens || 0,
