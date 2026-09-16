@@ -27,4 +27,6 @@ node scripts/serve.mjs
 
 `오늘 / 이번 주 / 이번 달` 기간을 전환하면 활동 시간, 토큰, 대화 목록, 효율 순위, 대체 모델 추천, AI별 사용 비중이 함께 바뀝니다. AI 사용 비중은 활동 시간 기준으로 Codex 작업과 OpenClaw 런타임 대화를 비교합니다. ChatGPT에는 개인 대화 사용량을 실시간으로 읽는 공식 API가 없으므로 아직 집계하지 않으며, 추후 공식 [ChatGPT 데이터 내보내기](https://help.openai.com/en/articles/7260999-how-do-i-export-my-chatgpt-history-and-data)의 `conversations.json` 가져오기를 지원할 수 있습니다.
 
+공개 사이트의 `/models.html`은 대체 모델 선택 가이드입니다. 작업 유형을 선택하면 우선 시험할 모델과 이유를 보여주며, 무료 한도, 컨텍스트, 추론 조절, 적합한 작업과 피해야 할 작업을 공식 문서에 근거해 비교합니다.
+
 공식 프로토콜: [Codex App Server](https://developers.openai.com/codex/app-server/). 계정 일별 사용량은 서비스가 제공한 날짜만 표시하며, 대화별 토큰은 계정 API 수치와 별개로 로컬 로그에서 읽습니다.
