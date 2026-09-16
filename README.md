@@ -29,4 +29,18 @@ node scripts/serve.mjs
 
 공개 사이트의 `/models.html`은 대체 모델 선택 가이드입니다. 작업 유형을 선택하면 우선 시험할 모델과 이유를 보여주며, 무료 한도, 컨텍스트, 추론 조절, 적합한 작업과 피해야 할 작업을 공식 문서에 근거해 비교합니다.
 
+## 공개 사이트 자동 갱신
+
+공개 사이트는 GitHub Gist의 `public-dashboard.json`을 페이지를 열 때마다 읽습니다. 이 파일에는 대화 제목, 본문, 로컬 경로를 넣지 않고 기간별 활동 시간, 토큰, 캐시율, 대화 수, 카테고리 합계만 올립니다.
+
+이 Mac에는 `com.ji0ung.codex-daybook-sync` LaunchAgent가 등록되어 있습니다. 로그인 상태에서 15분마다 로컬 Codex 세션을 다시 집계하고, GitHub CLI 인증을 사용해 공개 Gist를 갱신합니다. Mac이 꺼져 있거나 로그아웃된 동안에는 갱신되지 않으며, 다시 로그인하면 즉시 한 번 실행됩니다.
+
+바로 갱신하려면 다음 명령을 실행합니다.
+
+```sh
+npm run sync:public
+```
+
+ChatGPT 대화는 개인 계정의 대화 기록을 실시간으로 읽는 공식 API가 없어서 이 자동 집계에 포함되지 않습니다. 현재 공식적으로 가능한 경로는 ChatGPT 데이터 내보내기의 `conversations.json`을 가져오는 방식입니다.
+
 공식 프로토콜: [Codex App Server](https://developers.openai.com/codex/app-server/). 계정 일별 사용량은 서비스가 제공한 날짜만 표시하며, 대화별 토큰은 계정 API 수치와 별개로 로컬 로그에서 읽습니다.
