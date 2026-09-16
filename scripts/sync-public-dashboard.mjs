@@ -4,10 +4,15 @@ import { spawn } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createOperationsStore } from './operations-store.mjs';
+import { withRetry } from './retry.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const gistId = process.env.CODEX_DAYBOOK_GIST_ID || process.argv[2];
 const outputPath = join(root, 'data', 'public-dashboard.json');
+const userKey = process.env.DAYBOOK_USER_KEY || 'local-owner';
+const store = createOperationsStore(join(root, 'data', 'operations.db'));
+const runId = store.start(userKey);
 const topicLabels = { development: '개발', research: '리서치·기획', content: '콘텐츠', career: '취업·커리어', learning: '학습·실습', documentation: '파일·문서', troubleshooting: '운영·문제해결', other: '기타' };
 
 function run(command, args) {
@@ -48,17 +53,28 @@ function periodSummary(rows, days) {
   };
 }
 
-await run(process.execPath, [join(root, 'scripts/export-codex-sessions.mjs')]);
-const rows = JSON.parse(await readFile(join(root, 'data/codex-sessions.json'), 'utf8')).conversations;
-const payload = {
-  generatedAt: new Date().toISOString(),
-  privacy: 'aggregate-only',
-  periods: {
-    day: periodSummary(rows, 1),
-    week: periodSummary(rows, 7),
-    month: periodSummary(rows, 30),
-  },
-};
-await writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`);
-if (gistId) await run(process.env.GH_BIN || '/usr/local/bin/gh', ['gist', 'edit', gistId, '--filename', 'public-dashboard.json', outputPath]);
-console.log(`공개 집계 갱신: ${payload.generatedAt}`);
+try {
+  const exportResult = await withRetry(() => run(process.execPath, [join(root, 'scripts/export-codex-sessions.mjs')]));
+  const rows = JSON.parse(await readFile(join(root, 'data/codex-sessions.json'), 'utf8')).conversations;
+  const payload = {
+    generatedAt: new Date().toISOString(),
+    privacy: 'aggregate-only',
+    periods: {
+      day: periodSummary(rows, 1),
+      week: periodSummary(rows, 7),
+      month: periodSummary(rows, 30),
+    },
+  };
+  await writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`);
+  const publishResult = gistId
+    ? await withRetry(() => run(process.env.GH_BIN || '/usr/local/bin/gh', ['gist', 'edit', gistId, '--filename', 'public-dashboard.json', outputPath]))
+    : { attempts: 0 };
+  const day = payload.periods.day;
+  store.finish(runId, { status: 'succeeded', attempts: Math.max(exportResult.attempts, publishResult.attempts), workCount: day.workCount, totalTokens: day.totalTokens });
+  console.log(`공개 집계 갱신: ${payload.generatedAt}`);
+} catch (error) {
+  store.finish(runId, { status: 'failed', attempts: error.attempts || 1, errorMessage: error.message.slice(0, 500) });
+  throw error;
+} finally {
+  store.close();
+}

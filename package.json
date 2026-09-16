@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "node scripts/serve.mjs",
-    "sync:public": "node scripts/sync-public-dashboard.mjs 352da93b5a4f25e7fb7600e95dc04587"
+    "sync:public": "node scripts/sync-public-dashboard.mjs 352da93b5a4f25e7fb7600e95dc04587",
+    "test": "node --test scripts/*.test.mjs"
   },
   "dependencies": {
     "markdown-it": "^14.1.0"

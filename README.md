@@ -37,6 +37,8 @@ node scripts/serve.mjs
 
 이 Mac에는 `com.ji0ung.codex-daybook-sync` LaunchAgent가 등록되어 있습니다. 로그인 상태에서 15분마다 로컬 Codex 세션을 다시 집계하고, GitHub CLI 인증을 사용해 공개 Gist를 갱신합니다. Mac이 꺼져 있거나 로그아웃된 동안에는 갱신되지 않으며, 다시 로그인하면 즉시 한 번 실행됩니다.
 
+각 동기화 실행은 `data/operations.db`의 SQLite 테이블에 사용자 키, 상태, 시도 횟수, 처리량, 오류를 기록합니다. 내보내기와 게시 단계는 일시적 오류가 나면 지수 백오프로 최대 3회 재시도합니다. 로컬 서버의 `/api/operations`에서 최근 20회 실행 이력을 확인할 수 있습니다. DB와 WAL 파일은 Git에 포함하지 않습니다.
+
 바로 갱신하려면 다음 명령을 실행합니다.
 
 ```sh

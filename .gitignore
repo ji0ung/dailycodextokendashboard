@@ -1,3 +1,4 @@
 data/codex-sessions.json
 data/public-dashboard.json
+data/operations.db*
 node_modules/

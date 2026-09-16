@@ -10,9 +10,9 @@
 <div class="row"><div class="area">로그인·사용자 데이터</div><span class="status next">다음</span><p>현재는 단일 사용자 로컬 실행</p><p><b>OAuth + Row Level Security</b>다른 사용자의 데이터가 섞이지 않는 통합 테스트</p></div>
 <div class="row"><div class="area">크론·이벤트 자동화</div><span class="status done">동작</span><p><b>macOS LaunchAgent</b>15분마다 집계해 공개 피드 갱신</p><p><b>서버 스케줄러 확장</b>기기 전원이 꺼져도 실행되고 중복 작업 방지</p></div>
 <div class="row"><div class="area">LLM 평가</div><span class="status next">다음</span><p>현재는 모델 스펙과 시장 신호 비교</p><p><b>50개 고정 평가셋</b>분류 정확도·요약 충실도·코딩 성공률을 모델별 기록</p></div>
-<div class="row"><div class="area">재시도·사람 승인</div><span class="status next">다음</span><p>동기화 실패 로그는 남지만 자동 복구 정책 없음</p><p><b>지수 백오프 + 승인 큐</b>외부 배포와 삭제 작업은 사람이 승인해야 실행</p></div>
+<div class="row"><div class="area">재시도·사람 승인</div><span class="status doing">부분 구현</span><p><b>지수 백오프 재시도</b>내보내기와 게시 실패 시 최대 3회 자동 복구</p><p><b>승인 큐 추가</b>외부 배포와 삭제 작업은 사람이 승인해야 실행</p></div>
 <div class="row"><div class="area">개인정보·권한</div><span class="status doing">부분 구현</span><p><b>집계 전용 공개 피드</b>제목·본문·경로를 업로드하지 않음</p><p><b>마스킹 테스트 + 감사 로그</b>이메일·키·전화번호 탐지와 권한 변경 기록</p></div>
 <div class="row"><div class="area">비용·절약 시간</div><span class="status next">다음</span><p>토큰·캐시 재사용률은 측정 중</p><p><b>작업별 원가와 기준 시간</b>대체 모델 절감액과 수동 대비 절약 시간을 월간 표시</p></div>
-<div class="row"><div class="area">로그·운영 화면</div><span class="status doing">부분 구현</span><p>LaunchAgent 실행 로그와 대시보드 상태 배지 제공</p><p><b>동기화 성공률·지연·오류율</b>실패 작업 재실행 버튼과 알림 연결</p></div></section>
+<div class="row"><div class="area">로그·운영 화면</div><span class="status doing">부분 구현</span><p><b>SQLite 실행 이력 + 운영 API</b>사용자별 상태·시도 횟수·처리량·오류 기록</p><p><b>운영 UI 추가</b>성공률·지연·오류율과 실패 작업 재실행 버튼 제공</p></div></section>
 <section class="principle"><h2>채용 관점의 한 문장</h2><p>“AI 화면을 만들었다”가 아니라 “기존 업무 데이터를 연결하고, 실패를 통제하며, 품질과 비용 개선을 수치로 검증했다”를 증명하는 프로젝트로 발전시킵니다.</p></section>
 <p class="source">배경 자료: <a href="https://www.forbes.com/sites/bernardmarr/2026/08/31/the-ai-skills-employers-actually-want-in-2026/" target="_blank" rel="noreferrer">The AI Skills Employers Actually Want In 2026</a> · 기사에서는 독립적인 프롬프트 직무보다 기존 직무에 AI 워크플로 능력을 결합하는 흐름과 agentic AI 수요 증가를 설명합니다.</p></main></body></html>

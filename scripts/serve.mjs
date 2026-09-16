@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import MarkdownIt from 'markdown-it';
 import { connectCodex } from './codex-app-server.mjs';
 import { cleanConversationText, displayTitle } from './clean-conversation-text.mjs';
+import { createOperationsStore } from './operations-store.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const port = Number(process.env.DAYBOOK_PORT || 4173);
@@ -141,6 +142,17 @@ const server = createServer(async (request, response) => {
     } catch (error) {
       response.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
       response.end(JSON.stringify({ error: error.message }));
+    }
+    return;
+  }
+  if (pathname === '/api/operations') {
+    const store = createOperationsStore(join(root, 'data', 'operations.db'));
+    try {
+      const runs = store.list(process.env.DAYBOOK_USER_KEY || 'local-owner', 20);
+      response.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      response.end(JSON.stringify({ runs }));
+    } finally {
+      store.close();
     }
     return;
   }
